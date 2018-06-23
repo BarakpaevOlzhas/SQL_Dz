@@ -1,0 +1,106 @@
+--1
+create function Kolvo_Books()
+returns int
+as 
+begin 
+declare @in int
+declare @do int
+set @in = (select count(*) from books b
+join category c on c.id = b.id_category)
+set @do = (select count(*) from books)
+set @do = @do - @in
+return @do
+end
+
+select dbo.Kolvo_Books()
+
+--2
+create function izdal()
+returns table
+as  
+return(
+ select t.name, count(b.Id_theme) as Kol_vo from books b  
+ join themes t on b.Id_theme = t.id
+ group by t.name
+ union
+ select p.name,count(b.Id_press) as Kol_vo from books b 
+ join press p on b.Id_press = p.id
+  group by p.name
+)
+
+select * from dbo.izdal()
+ 
+--3
+create function sort3(
+@NameBooks nvarchar(100),
+@nameThem nvarchar(100),
+ @namePress nvarchar(100),
+ @on int , @dv int)
+returns @ret table (n int,name nvarchar(300),Them nvarchar(300), Press nvarchar(300))
+as 
+begin
+declare @temp table (n1 int,name1 nvarchar(300),Them1 nvarchar(300), Press1 nvarchar(300))
+
+insert into @temp
+select b.N, b.Name,t.name,p.name from books b
+join themes t on t.id = b.Id_theme
+join press p on p.id = b.Id_press
+where b.Name like @NameBooks and t.name like @nameThem and p.name like @namePress
+
+insert @ret
+select * from @temp
+
+
+return 
+end 
+
+select * from sort3('%ПК%','%ПК%','%%',1,1)
+
+
+--4
+create function mi(@a int,@b int,@v int)
+returns int
+as 
+begin 
+if @a>@b
+begin
+if @b > @v 
+begin
+return @v
+end
+else 
+begin
+return @b
+end 
+end
+if @a < @v
+begin
+return @a 
+end
+return @v
+end
+
+select dbo.mi(334,51,232)
+
+
+--5
+create function Ma(@a int)
+returns int 
+as
+begin
+if @a > 9 or @a < 100
+begin
+declare @od int
+declare @dv int
+set @dv = @a % 10
+set @od = (@a - @dv) /10
+if @od >= @dv
+return @od
+else 
+return @dv
+end
+return 0
+end
+
+
+select dbo.Ma(83)
