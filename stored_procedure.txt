@@ -1,0 +1,46 @@
+--create PROCEDURE abatement3
+--as 
+--update books set price =  price - price/10 where Year(Date) < '1998'
+
+--execute abatement3
+
+
+--create PROCEDURE ins
+--@name1 varchar(50),
+--@name2 varchar(50),
+--@name3 varchar(50),
+--@name4 varchar(50),
+--@name5 varchar(50)
+--as
+--insert press(name) values (@name1)
+--insert press(name) values (@name2)
+--insert press(name) values (@name3)
+--insert press(name) values (@name4)
+--insert press(name) values (@name5)
+
+
+--execute ins 'Go','Gg','Gp','Gf','Gl'
+
+create PROCEDURE facktor
+(@int int)
+as 
+Declare @nac int
+Declare @fa int
+set @nac = 1
+set @fa = 1
+if @int >= 0 
+begin
+while @nac != @int+1
+begin  
+set @fa = @fa * @nac
+set @nac += 1
+end
+select @fa
+end
+
+
+execute facktor 5
+
+select * from books 
+select * from press 
+ 
