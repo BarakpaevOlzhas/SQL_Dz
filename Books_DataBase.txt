@@ -1,0 +1,81 @@
+create table books(
+id int primary key identity(1,1),
+name nvarchar(300) not null, 
+count int
+)
+
+create table vzatBooksBooks(
+id int primary key identity(1,1),
+name nvarchar(300) not null, 
+id_student int,
+count int
+)
+
+create table student(
+id int primary key identity(1,1),
+name nvarchar(300) not null, 
+count int
+)
+
+create table deleteBooks(
+id int primary key identity(1,1),
+name nvarchar(300) not null,
+date_Delete datetime not null
+)
+
+
+-1/3
+create trigger [dbo].[countNinusOne]
+on [dbo].[deleteBooks]
+for insert
+as
+Declare @name nvarchar(300), @id_student int,@count int
+select @name=name from inserted
+select @count=count from inserted
+if @count <= (select count from books where @name like name)
+update books set count -=@count  where @name like name
+else
+delete from deleteBooks where id = (select max(id) from deleteBooks)
+
+-2
+create trigger vozvrat
+on [dbo].[deleteBooks]
+for delete
+as
+Declare @name nvarchar(300), @id_student int,@count int
+select @name=name from deleted
+select @count=count from deleted
+update books set count +=@count  where @name like name
+
+-4
+create trigger contr
+on [dbo].[deleteBooks]
+for insert
+as
+Declare @name nvarchar(300),@count int
+select @name=name from inserted
+select @count=count from inserted
+if @count > 3
+begin
+update deleteBooks set count = 3 where id = (select max(id) from deleteBooks)
+update books set count += @count-3 where @name like name
+end
+
+--5
+create trigger delet_book
+on books 
+for delete
+as 
+Declare @name nvarchar(300)
+select @name = name from deleted
+insert deleteBooks values (@name, getdate())
+
+--6
+alter trigger return_books
+on books
+for insert 
+as 
+declare @name nvarchar(300)
+select @name = name from inserted
+if @name = (select top(1) name from deleteBooks where name like @name)
+delete from deleteBooks where @name = name
