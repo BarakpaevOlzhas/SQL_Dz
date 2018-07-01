@@ -1,0 +1,80 @@
+create database book_sale
+
+use book_sale
+
+create table author(
+id int primary key identity(1,1)
+,name nvarchar(100)
+)
+
+create table books(
+id int primary key identity(1,1),
+pages int,
+name nvarchar(100),
+id_author int
+)							    
+
+create table izdatel(
+id int primary key identity(1,1),
+name nvarchar(100)
+)
+
+create table buyers(
+id int primary key identity(1,1),
+name nvarchar(100)
+)
+
+create table prodazha(
+id int primary key identity(1,1), 
+id_pokep int foreign key references buyers(id),
+id_books int foreign key references books(id),
+price int
+)
+
+alter table books
+add constraint nomin
+check(pages > 0)
+
+
+
+INSERT INTO author(name) VALUES  ('Давид')
+INSERT INTO author(name) VALUES  ('Захар')
+INSERT INTO author(name) VALUES  ('Валентин')
+
+
+INSERT INTO buyers(name) VALUES  ('F.Давид')
+INSERT INTO buyers(name) VALUES  ('F.Захар')
+INSERT INTO buyers(name) VALUES  ('F.Валентин')
+
+
+INSERT INTO izdatel(name) VALUES  ('F.h')
+INSERT INTO izdatel(name) VALUES  ('F.З')
+INSERT INTO izdatel(name) VALUES  ('Gl')
+
+INSERT INTO prodazha(id_pokep,id_books,price) VALUES(1,2,4000)
+INSERT INTO prodazha(id_pokep,id_books,price) VALUES(2,3,14000)
+
+INSERT INTO books([pages],[name],[id_author]) VALUES (400,'KakYgodno',2)
+INSERT INTO books([pages],[name],[id_author]) VALUES (300,'Война и мир',1)
+
+create index bo on books(name)
+
+create UNIQUE Clustered index  bo on author(id)
+
+
+select * from books
+select sum(5+5) as '5+5'
+select * from books where name like 'Война и мир'
+select pages, count(1) from books group by pages 
+select * from books b join author a on b.id_author = a.id
+select * from buyers union select * from author
+select * from author order by id desc
+select * from books b left join author a on b.id_author = a.id
+select name,pages from books where pages = (select max(pages)from books)
+select * from books where name like 'Война и мир'
+alter table books add constraint nomin check(pages > 0)
+INSERT INTO books([pages],[name],[id_author]) VALUES (300,'Война и мир',1)
+delete from books where name = 'Война и мир'
+create table nalog(id int, nalogi int)
+drop table nalog
+update books set name = 'none' where name like 'толковый словарь '
