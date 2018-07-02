@@ -1,0 +1,34 @@
+create TRIGGER addprocent
+   ON history_buy
+   after insert
+AS 
+BEGIN
+
+Declare @percent int
+Declare @id_K int 
+Declare @summ int 
+Declare @dic int 
+
+select @id_K = id_klient from inserted
+select @percent = discount from Klient where id = @id_K
+select @summ = sum_price from inserted
+if @summ > 10000 
+BEGIN
+set @dic = @summ / 10000
+END
+update history_buy set discount = ((select discount from Klient where id = @id_K)*@summ)/100 where id = (select max(id) from history_buy)
+update Klient set discount += @dic where id = @id_K
+update history_buy set date = (select getdate())
+update history_buy set @dic = @summ - discount
+update history_buy set price_discount = @dic where id = (select max(id) from history_buy)
+END
+
+
+
+alter TRIGGER procent
+on Klient
+after insert
+AS 
+BEGIN
+	update Klient set discount = 3 where id = (select max(id) from Klient)
+END
