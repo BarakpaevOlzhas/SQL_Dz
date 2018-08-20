@@ -1,0 +1,6 @@
+
+bcp fds.dbo.name out C:\Ppa\PPs.txt -T -c
+
+BULK INSERT Name.dbo.name from 'C:\Ppa\PPs.txt'
+
+BULK INSERT Name.dbo.name from 'C:\Ppa\PPs.txt' with( FIRSTROW  = 4)
